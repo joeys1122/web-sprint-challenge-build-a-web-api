@@ -46,11 +46,9 @@ router.put('/:id', checkProjectId, checkProjectUpdate, (req, res, next) => {
 
 router.delete('/:id', checkProjectId, (req, res, next) => {
   Projects.remove(req.params.id)
-    .then(proj => {
-      if (proj) {
+    .then(deleted => {
+      if (deleted) {
         res.send('');
-      } else {
-        throw new Error();
       }
     })
     .catch(err => {

@@ -1,5 +1,6 @@
 // add middlewares here related to actions
 const { get } = require('./actions-model');
+const getProj = require('../projects/projects-model').get;
 const yup = require('yup');
 
 const checkActionId = (req, res, next) => {
@@ -18,33 +19,26 @@ const checkActionId = (req, res, next) => {
     });
 };
 
-const checkActionPost = async (req, res, next) => {
-  const projectSchema = yup.object({
-    name: yup.string().trim().required(),
-    description: yup.string().trim().required()
+const checkActionBody = async (req, res, next) => {
+  const actionSchema = yup.object({
+    project_id: yup.number().required(),
+    notes: yup.string().trim().required(),
+    description: yup.string().trim().max(128).required(),
   });
-  try {
-    const validated = await projectSchema.validate(req.body);
-    req.body = validated;
-    next();
-  } catch(err) {
-    next({ status: 400, message: 'please enter a name and description' });
+
+  const proj = await getProj(req.body.project_id);
+
+  if (proj) {
+    try {
+      const validated = await actionSchema.validate(req.body);
+      req.body = validated;
+      next();
+    } catch(err) {
+      next({ status: 400, message: 'please fill in notes and description' });
+    }
+  } else {
+    next({ status: 404, message: `could not get project with id ${req.action.project_id}` });
   }
 };
 
-const checkActionUpdate = async (req, res, next) => {
-  const projectSchema = yup.object({
-    name: yup.string().trim().required(),
-    description: yup.string().trim().required(),
-    completed: yup.boolean().required()
-  });
-  try {
-    const validated = await projectSchema.validate(req.body);
-    req.body = validated;
-    next();
-  } catch(err) {
-    next({ status: 400, message: 'please enter a name, description, and completed status' });
-  }
-}
-
-module.exports = { checkActionId, checkActionPost, checkActionUpdate }
+module.exports = { checkActionId, checkActionBody }

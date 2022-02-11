@@ -33,7 +33,7 @@ router.post('/', checkProjectPost, (req, res, next) => {
     });
 });
 
-router.put('/:id', checkProjectId, checkProjectUpdate, async (req, res, next) => {
+router.put('/:id', checkProjectId, checkProjectUpdate, (req, res, next) => {
   Projects.update(req.params.id, req.body)
     .then(proj => {
       res.status(200).json(proj);

@@ -3,32 +3,38 @@ const express = require('express');
 
 const Projects = require('./projects-model');
 
+const { checkProjectId, checkProjectBody } = require('./projects-middleware');
+
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', (req, res, next) => {
   Projects.get()
     .then(projects => {
-      projects ?
-      res.status(200).json(projects) :
-      res.json([]);
+      res.status(200).json(projects)
     })
     .catch(err => {
       console.log(err);
-      res.status(500).json({ message: 'error getting projects' });
+      next({ status: 500, message: 'error getting projects' });
     });
 });
 
-router.get('/:id', (req, res) => {
-  Projects.get(req.params.id)
-    .then(project => {
-      project ?
-      res.status(200).json(project) :
-      res.status(404).json({ message: `could not get project with id ${req.params.id}`});
+router.get('/:id', checkProjectId, (req, res) => {
+  res.status(200).json(req.project);
+});
+
+router.post('/', checkProjectBody, (req, res, next) => {
+  Projects.insert(req.body)
+    .then(proj => {
+      res.status(200).json(proj);
     })
     .catch(err => {
       console.log(err);
-      res.status(500).json({ message: 'error getting project' });
+      next({ status: 500, message: 'error posting project' });
     });
+});
+
+router.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ message: err.message });
 });
 
 module.exports = router;

@@ -1,5 +1,6 @@
 // add middlewares here related to projects
 const { get } = require('./projects-model');
+const yup = require('yup');
 
 const checkProjectId = (req, res, next) => {
   get(req.params.id)
@@ -17,12 +18,33 @@ const checkProjectId = (req, res, next) => {
     });
 };
 
-const checkProjectBody = (req, res, next) => {
-  if (req.body.name && req.body.description) {
+const checkProjectPost = async (req, res, next) => {
+  const projectSchema = yup.object({
+    name: yup.string().trim().required(),
+    description: yup.string().trim().required()
+  });
+  try {
+    const validated = await projectSchema.validate(req.body);
+    req.body = validated;
     next();
-  } else {
+  } catch(err) {
     next({ status: 400, message: 'please enter a name and description' });
   }
 };
 
-module.exports = { checkProjectId, checkProjectBody }
+const checkProjectUpdate = async (req, res, next) => {
+  const projectSchema = yup.object({
+    name: yup.string().trim().required(),
+    description: yup.string().trim().required(),
+    completed: yup.boolean().required()
+  });
+  try {
+    const validated = await projectSchema.validate(req.body);
+    req.body = validated;
+    next();
+  } catch(err) {
+    next({ status: 400, message: 'please enter a name, description, and completed status' });
+  }
+}
+
+module.exports = { checkProjectId, checkProjectPost, checkProjectUpdate }

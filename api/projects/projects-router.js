@@ -3,7 +3,7 @@ const express = require('express');
 
 const Projects = require('./projects-model');
 
-const { checkProjectId, checkProjectBody } = require('./projects-middleware');
+const { checkProjectId, checkProjectPost, checkProjectUpdate } = require('./projects-middleware');
 
 const router = express.Router();
 
@@ -22,14 +22,25 @@ router.get('/:id', checkProjectId, (req, res) => {
   res.status(200).json(req.project);
 });
 
-router.post('/', checkProjectBody, (req, res, next) => {
+router.post('/', checkProjectPost, (req, res, next) => {
   Projects.insert(req.body)
+    .then(proj => {
+      res.status(201).json(proj);
+    })
+    .catch(err => {
+      console.log(err);
+      next({ status: 500, message: 'error posting project' });
+    });
+});
+
+router.put('/:id', checkProjectId, checkProjectUpdate, async (req, res, next) => {
+  Projects.update(req.params.id, req.body)
     .then(proj => {
       res.status(200).json(proj);
     })
     .catch(err => {
       console.log(err);
-      next({ status: 500, message: 'error posting project' });
+      next({ status: 500, message: 'error updating project' });
     });
 });
 

@@ -6,4 +6,16 @@ const server = express();
 // Build your projects router in /api/projects/projects-router.js
 // Do NOT `server.listen()` inside this file!
 
+const actionsRouter = require('./actions/actions-router');
+const projectsRouter = require('./projects/projects-router');
+
+server.use(express.json());
+
+server.use('/api/actions', actionsRouter);
+server.use('/api/projects', projectsRouter);
+
+server.get('/', (req, res) => {
+  res.send(`<h1>Build A Web API Sprint Challenge`);
+});
+
 module.exports = server;

@@ -147,7 +147,36 @@ We have provided test data for all the resources.
 Be prepared to demonstrate your understanding of this week's concepts by answering questions on the following topics. You might prepare by writing down your own answers before hand.
 
 1. The core features of Node.js and Express and why they are useful.
+   * Node.js:
+     - lets you use JavaScript to write server code
+     - lets you use the same language for client and server (minimizes context switching)
+     - single-threaded (removes complexity handling multiple threads)
+     - asynchronous (takes full advantage of processor its running on)
+     - allows access to npm modules that you can use in your project
+   * Express:
+     - access to middleware which are reusable functions that let you perform specific tasks (ex: loggers, authenticators)
+     - routing that provides a way to break up an application into smaller parts by letting you select which request handle function is executed based on the URL and HTTP method used
+     - convenience helpers which are out-of-the-box helpers that provide functionality, makes writing web apps and APIs easier (ex: `response.redirect()`, `response.status()`, `response.send()`, `request.ip`)
+     - views that let you dynamically render HTML on the server and generate it using other languages
+
+
 1. Understand and explain the use of Middleware.
+   - Middleware functions receive request and response objects that they can first operate on, and then trigger some action (like returning a response or moving into the next middleware) when specified
+
+
 1. The basic principles of the REST architectural style.
+   - Everything is a resource
+   - Each resource is accessible via a unique URL
+   - Resources can have multiple representations
+   - Communication happens over a stateless protocol (HTTP)
+   - Resource management happens via HTTP methods
+
+
 1. Understand and explain the use of Express Routers.
+   - Express routers are separate pieces of code that can be composed together as a way of organizing Express applications when they get too large to handle in one file
+   - Each router can have its own routing and middleware to manage the endpoints of it's specific resource (ex: a `user` router with endpoints to get a list of users, add users, modify, delete, etc.)
+
+
 1. Describe tooling used to manually test the correctness of an API.
+   - API testing tools (like Postman or HTTPie) allows you to easily test your API by sending requests and examining whether you get the expected response
+   - You can specify which HTTP methods (`GET`, `POST`, `DELETE`, etc.) you want to test, as well as add JSON data to the body, form data, or headers to the request

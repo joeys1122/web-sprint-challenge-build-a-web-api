@@ -44,6 +44,32 @@ router.put('/:id', checkProjectId, checkProjectUpdate, async (req, res, next) =>
     });
 });
 
+router.delete('/:id', checkProjectId, (req, res, next) => {
+  Projects.remove(req.params.id)
+    .then(proj => {
+      if (proj) {
+        res.send('');
+      } else {
+        throw new Error();
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      next({ status: 500, message: 'error deleting project' });
+    });
+});
+
+router.get('/:id/actions', checkProjectId, (req, res, next) => {
+  Projects.getProjectActions(req.params.id)
+    .then(actions => {
+      res.status(200).json(actions);
+    })
+    .catch(err => {
+      console.log(err);
+      next({ status: 500, message: 'error getting project actions' });
+    })
+});
+
 router.use((err, req, res, next) => {
   res.status(err.status || 500).json({ message: err.message });
 });
